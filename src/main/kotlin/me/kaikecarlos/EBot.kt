@@ -1,5 +1,6 @@
 package me.kaikecarlos
 
+import com.google.common.flogger.FluentLogger
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
@@ -11,8 +12,10 @@ import me.kaikecarlos.commands.StartCommand
 import me.kaikecarlos.commands.StartCompanyCommand
 import me.kaikecarlos.commands.company.SearchCompanyCommand
 import me.kaikecarlos.commands.company.TopCompaniesRank
+import me.kaikecarlos.commands.guilds.SearchGuild
 import me.kaikecarlos.commands.misc.PingCommand
 import me.kaikecarlos.data.CompanyProfile
+import me.kaikecarlos.data.GuildWrapper
 import me.kaikecarlos.data.UserProfile
 import me.kaikecarlos.extensions.MessageInteractionFunctions
 import me.kaikecarlos.listeners.DiscordListener
@@ -26,13 +29,14 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class EBot(val p : String, val t : String) {
-
+    val logger = FluentLogger.forEnclosingClass()
     val commands = listOf(
             PingCommand(),
             StartCommand(),
             StartCompanyCommand(),
             TopCompaniesRank(),
-            SearchCompanyCommand()
+            SearchCompanyCommand(),
+            SearchGuild()
     )
 
     val messageInteractionMap = HashMap<String, MessageInteractionFunctions>()
@@ -45,16 +49,18 @@ class EBot(val p : String, val t : String) {
     lateinit var database : MongoDatabase
     lateinit var usersCollection: MongoCollection<UserProfile>
     lateinit var companysCollection: MongoCollection<CompanyProfile>
+    lateinit var guildsCollection: MongoCollection<GuildWrapper>
 
+    val discordListener = DiscordListener(this)
+
+    val builder = JDABuilder(AccountType.BOT)
+            .setToken(t)
+            .addEventListener(discordListener)
+    val jda = builder.buildBlocking()
     fun start() {
         loadMongo()
-        val discordListener = DiscordListener(this)
 
-        val builder = JDABuilder(AccountType.BOT)
-                            .setToken(t)
-                            .addEventListener(discordListener)
-        val jda = builder.buildBlocking()
-
+        logger.atInfo().log("Fui iniciado com sucesso! Atualmente ${jda.guilds.size} participam da minha economia!")
 
     }
     fun loadMongo() {
@@ -78,6 +84,7 @@ class EBot(val p : String, val t : String) {
 
         usersCollection = database.getCollection("users", UserProfile::class.java)
         companysCollection = database.getCollection("companys", CompanyProfile::class.java)
+        guildsCollection = database.getCollection("guilds", GuildWrapper::class.java)
     }
 
     fun getProfileFromUser(user: User) : UserProfile {

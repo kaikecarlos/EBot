@@ -9,8 +9,5 @@
         <module name="EBot" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EBot" target="1.7" />
-    </bytecodeTargetLevel>
   </component>
 </project>

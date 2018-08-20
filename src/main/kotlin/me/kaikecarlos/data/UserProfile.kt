@@ -13,6 +13,6 @@ class UserProfile @BsonCreator constructor(
 
 
     var company = ""
-    var money = 0.toDouble()
+    var money = 8888880.toDouble()
     var xp = 0
 }

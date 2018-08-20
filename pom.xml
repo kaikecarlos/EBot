@@ -46,11 +46,28 @@
             <artifactId>guava</artifactId>
             <version>25.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.flogger</groupId>
+            <artifactId>flogger</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.flogger</groupId>
+            <artifactId>flogger-system-backend</artifactId>
+            <version>0.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
